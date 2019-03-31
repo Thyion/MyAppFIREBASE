@@ -4,6 +4,8 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -25,10 +27,21 @@ public class MainActivity extends AppCompatActivity {
     private FirebaseAuth.AuthStateListener mAuthListener;
     private static final String TAG = "MainActivity";
 
+    private EditText email;
+    private EditText password;
+    private Button login;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        email = findViewById(R.id.emailEditText);
+        password = findViewById(R.id.passwordEditText);
+        login = findViewById(R.id.loginButton);
+
+
 
         mAuth = FirebaseAuth.getInstance();
 
