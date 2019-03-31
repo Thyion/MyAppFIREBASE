@@ -1,7 +1,7 @@
 package com.example.studentwsb.myappfirebase;
 
 
-        import android.support.annotation.NonNull;
+import android.support.annotation.NonNull;
         import android.support.v7.app.AppCompatActivity;
         import android.os.Bundle;
         import android.util.Log;
@@ -28,10 +28,10 @@ public class MainActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
     private static final String TAG = "MainActivity";
-
     private EditText email;
     private EditText password;
     private Button login;
+    private Button signOut;
 
 
     @Override
@@ -41,26 +41,27 @@ public class MainActivity extends AppCompatActivity {
         email = findViewById(R.id.emailEditText);
         password = findViewById(R.id.passwordEditText);
         login = findViewById(R.id.loginButton);
+        signOut = findViewById(R.id.signOutButton);
 
         mAuth = FirebaseAuth.getInstance();
 
         database = FirebaseDatabase.getInstance();
         databaseReference = database.getReference("message");
 
-        databaseReference.setValue("Ala ma kota");
+       //  databaseReference.setValue("Ala ma kota");
 
-        databaseReference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                String value = dataSnapshot.getValue(String.class);
-                Toast.makeText(MainActivity.this, value, Toast.LENGTH_LONG).show();
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
+//        databaseReference.addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(DataSnapshot dataSnapshot) {
+//                String value = dataSnapshot.getValue(String.class);
+//                Toast.makeText(MainActivity.this, value, Toast.LENGTH_LONG).show();
+//            }
+//
+//            @Override
+//            public void onCancelled(DatabaseError databaseError) {
+//
+//            }
+//        });
 
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
@@ -69,6 +70,7 @@ public class MainActivity extends AppCompatActivity {
                 if(user != null) {
                     //użytkownik się zalogował
                     Log.d(TAG, "użytkownik zalogowany");
+                    Log.d(TAG, "NazwaUzytkownika: " + user.getEmail());
                 } else {
                     // użytkownik niezalogowany
                     Log.d(TAG, "użytkownik nie jest zalogowany");
@@ -79,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
         login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String emailString = email.getText().toString();
+                final String emailString = email.getText().toString();
                 String pdwString = password.getText().toString();
 
                 if (!emailString.equals("") & !pdwString.equals("")) {
@@ -93,11 +95,24 @@ public class MainActivity extends AppCompatActivity {
                                         Toast.makeText(MainActivity.this, "Zalogowano", Toast.LENGTH_LONG).show();
 
                                         //teraz dopiero możemy zapisywać do bazy danych
-                                        databaseReference.setValue("Zalogowany użytkownik");
+
+                                        Customer customer = new Customer("Jan", "Kowalski", emailString, 25);
+
+
+
+                                        databaseReference.setValue(customer);
                                     }
                                 }
                             });
                 }
+            }
+        });
+
+        signOut.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mAuth.signOut();
+                Toast.makeText(MainActivity.this, "Wylogowałeś się", Toast.LENGTH_LONG).show();
             }
         });
     }
