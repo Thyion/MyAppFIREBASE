@@ -32,6 +32,7 @@ public class MainActivity extends AppCompatActivity {
     private EditText password;
     private Button login;
     private Button signOut;
+    private Button register;
 
 
     @Override
@@ -42,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
         password = findViewById(R.id.passwordEditText);
         login = findViewById(R.id.loginButton);
         signOut = findViewById(R.id.signOutButton);
+        register = findViewById(R.id.registerButton);
 
         mAuth = FirebaseAuth.getInstance();
 
@@ -97,9 +99,6 @@ public class MainActivity extends AppCompatActivity {
                                         //teraz dopiero możemy zapisywać do bazy danych
 
                                         Customer customer = new Customer("Jan", "Kowalski", emailString, 25);
-
-
-
                                         databaseReference.setValue(customer);
                                     }
                                 }
@@ -115,6 +114,29 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(MainActivity.this, "Wylogowałeś się", Toast.LENGTH_LONG).show();
             }
         });
+
+        register.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final String emailString = email.getText().toString();
+                final String pdwString = password.getText().toString();
+
+                if (!emailString.equals("") & !pdwString.equals("")) {
+                    mAuth.createUserWithEmailAndPassword(emailString, pdwString).addOnCompleteListener(MainActivity.this, new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            if(!task.isSuccessful()){
+                                Toast.makeText(MainActivity.this, "Nie utworzono konta. Podane dane są nieprawidłowe", Toast.LENGTH_LONG).show();
+                            }else{
+                                Toast.makeText(MainActivity.this, "Rejestracja pomyślna", Toast.LENGTH_LONG).show();
+                            }
+
+                        }
+                    });
+                }
+            }
+        });
+
     }
 
     @Override
